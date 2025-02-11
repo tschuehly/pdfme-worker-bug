@@ -1,28 +1,10 @@
 // pdf-worker.js
 
 // Import the library or script for PDF generation (if required)
-importScripts('/js/pdfme.js'); // Adjust the path to your `pdfme` library
+importScripts('pdfme.js'); // Adjust the path to your `pdfme` library
 
 const host = location.origin
 const fonts = {
-  Roboto: {
-    data: host + '/fonts/Roboto-Regular.ttf'
-  },
-  AlegreyaMedium: {
-    data: host + '/fonts/Alegreya-Medium.ttf'
-  },
-  AlegreyaRegular: {
-    data: host + '/fonts/Alegreya-Regular.ttf'
-  },
-  AlegreyaSansMedium: {
-    data: host + '/fonts/AlegreyaSans-Medium.ttf'
-  },
-  CabinMedium: {
-    data: host + '/fonts/Cabin-Medium.ttf'
-  },
-  CabinRegular: {
-    data: host + '/fonts/Cabin-Regular.ttf'
-  },
   PlayfairDisplaySemibold: {
     data: host + '/fonts/PlayfairDisplay-SemiBold.ttf'
   },
@@ -35,45 +17,6 @@ const fonts = {
   },
   PlayfairRegular: {
     data: host + '/fonts/Playfair-Regular.ttf'
-  },
-  PoppinsRegular: {
-    data: host + '/fonts/Poppins-Regular.ttf'
-  },
-  CormorantBold: {
-    data: host + '/fonts/Cormorant-Bold.ttf'
-  },
-  CormorantSemiBold: {
-    data: host + '/fonts/Cormorant-SemiBold.ttf'
-  },
-  CormorantRegular: {
-    data: host + '/fonts/Cormorant-Regular.ttf'
-  },
-  CormorantMedium: {
-    data: host + '/fonts/Cormorant-Medium.ttf'
-  },
-  DMSansMedium: {
-    data: host + '/fonts/DMSans-Medium.ttf'
-  },
-  Inter: {
-    data: host + '/fonts/Inter.woff2',
-  },
-  Rockwell: {
-    data: host + '/fonts/rockwell.woff2'
-  },
-  Saira: {
-    data: host + '/fonts/Saira.woff2',
-  },
-  SourceSerif: {
-    data: host + '/fonts/SourceSerif.woff2'
-  },
-  Sail: {
-    data: host + '/fonts/Sail.ttf'
-  },
-  FrauncesRegular: {
-    data: host + '/fonts/Fraunces-Regular.ttf'
-  },
-  FrauncesSemibold: {
-    data: host + '/fonts/Fraunces-SemiBold.ttf'
   },
   HankenGroteskRegular: {
     data: host + '/fonts/HankenGrotesk-Regular.ttf'
@@ -97,6 +40,7 @@ const plugins = {
 // This is the Web Worker event handler
 self.onmessage = async function (event) {
   const { pdfTemplate } = event.data;
+  console.log("pdfTemplate", pdfTemplate)
   try {
     const inputs = [{}]
     console.log("Start PDF generation: " + inputs.length + " inputs");

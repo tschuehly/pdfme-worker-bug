@@ -1,0 +1,75 @@
+<script>
+  const pdfWorker = new Worker("generator.js");
+
+
+  const pdfTemplate = {
+    "schemas": [
+      [
+        {
+          "name": "taskQrCode",
+          "type": "qrcode",
+          "content": "photoquest.wedding",
+          "position": {
+            "x": 82,
+            "y": 80
+          },
+          "backgroundColor": "#ffffff",
+          "barColor": "#333333",
+          "width": 22,
+          "height": 22,
+          "rotate": 0,
+          "opacity": 1,
+          "required": false,
+          "readOnly": true
+        }
+        ]
+    ],
+    "basePdf": "data:application/pdf;base64,JVBERi0xLjQKJcfsj6IKJSVJbnZvY2F0aW9uOiBncyAtZFNBRkVSIC1zRk9OVFBBVEg9PyAtZE5PUEFVU0UgLWROdW1SZW5kZXJpbmdUaHJlYWRzPTggLXNERVZJQ0U9cGRmd3JpdGUgLWRDb21wYXRpYmlsaXR5TGV2ZWw9MS40IC1kQXV0b1JvdGF0ZVBhZ2VzPS9Ob25lIC1nNDM2NXgzMTQ2IC1kUERGRml0UGFnZSAtc091dHB1dEZpbGU9PyA/CjUgMCBvYmoKPDwvTGVuZ3RoIDYgMCBSL0ZpbHRlciAvRmxhdGVEZWNvZGU+PgpzdHJlYW0KeJwrVDDQM1QwAEEonZzLpR9krpBezBXIBQBb9AYhZW5kc3RyZWFtCmVuZG9iago2IDAgb2JqCjMwCmVuZG9iagoxMCAwIG9iago8PC9MZW5ndGggMTEgMCBSL0ZpbHRlciAvRmxhdGVEZWNvZGU+PgpzdHJlYW0KeJwrVDDQM1QwAEEonZzLpR9krpBezBXIBQBb9AYhZW5kc3RyZWFtCmVuZG9iagoxMSAwIG9iagozMAplbmRvYmoKNCAwIG9iago8PC9UeXBlL1BhZ2UvTWVkaWFCb3ggWzAgMCA0MzYuNSAzMTQuNl0KL1BhcmVudCAzIDAgUgovUmVzb3VyY2VzPDwvUHJvY1NldFsvUERGXQovRXh0R1N0YXRlIDggMCBSCj4+Ci9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKOSAwIG9iago8PC9UeXBlL1BhZ2UvTWVkaWFCb3ggWzAgMCA0MzYuNSAzMTQuNl0KL1BhcmVudCAzIDAgUgovUmVzb3VyY2VzPDwvUHJvY1NldFsvUERGXQovRXh0R1N0YXRlIDEyIDAgUgo+PgovQ29udGVudHMgMTAgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8IC9UeXBlIC9QYWdlcyAvS2lkcyBbCjQgMCBSCjkgMCBSCl0gL0NvdW50IDIKPj4KZW5kb2JqCjEgMCBvYmoKPDwvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMyAwIFIKL01ldGFkYXRhIDEzIDAgUgo+PgplbmRvYmoKNyAwIG9iago8PC9UeXBlL0V4dEdTdGF0ZQovQk0vTm9ybWFsCi9USyB0cnVlPj5lbmRvYmoKOCAwIG9iago8PC9SNwo3IDAgUj4+CmVuZG9iagoxMiAwIG9iago8PC9SNwo3IDAgUj4+CmVuZG9iagoxMyAwIG9iago8PC9UeXBlL01ldGFkYXRhCi9TdWJ0eXBlL1hNTC9MZW5ndGggMTE4MD4+c3RyZWFtCjw/eHBhY2tldCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+Cjw/YWRvYmUteGFwLWZpbHRlcnMgZXNjPSJDUkxGIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0nYWRvYmU6bnM6bWV0YS8nIHg6eG1wdGs9J1hNUCB0b29sa2l0IDIuOS4xLTEzLCBmcmFtZXdvcmsgMS42Jz4KPHJkZjpSREYgeG1sbnM6cmRmPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjJyB4bWxuczppWD0naHR0cDovL25zLmFkb2JlLmNvbS9pWC8xLjAvJz4KPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6cGRmPSdodHRwOi8vbnMuYWRvYmUuY29tL3BkZi8xLjMvJyBwZGY6UHJvZHVjZXI9J0dQTCBHaG9zdHNjcmlwdCA5LjUyJy8+CjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0naHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyc+PHhtcDpNb2RpZnlEYXRlPjIwMjUtMDEtMjRUMDg6NTE6NDcrMDE6MDA8L3htcDpNb2RpZnlEYXRlPgo8eG1wOkNyZWF0ZURhdGU+MjAyNS0wMS0yNFQwODo1MTo0NyswMTowMDwveG1wOkNyZWF0ZURhdGU+Cjx4bXA6Q3JlYXRvclRvb2w+VW5rbm93bkFwcGxpY2F0aW9uPC94bXA6Q3JlYXRvclRvb2w+PC9yZGY6RGVzY3JpcHRpb24+CjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhhcE1NPSdodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vJyB4YXBNTTpEb2N1bWVudElEPSd1dWlkOjljYTQxMjliLTEyNDQtMTFmYi0wMDAwLWZjOWY4ZTQyNGZiYicvPgo8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczpkYz0naHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8nIGRjOmZvcm1hdD0nYXBwbGljYXRpb24vcGRmJz48ZGM6dGl0bGU+PHJkZjpBbHQ+PHJkZjpsaSB4bWw6bGFuZz0neC1kZWZhdWx0Jz5VbnRpdGxlZDwvcmRmOmxpPjwvcmRmOkFsdD48L2RjOnRpdGxlPjwvcmRmOkRlc2NyaXB0aW9uPgo8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCjw/eHBhY2tldCBlbmQ9J3cnPz4KZW5kc3RyZWFtCmVuZG9iagoyIDAgb2JqCjw8L1Byb2R1Y2VyKEdQTCBHaG9zdHNjcmlwdCA5LjUyKQovQ3JlYXRpb25EYXRlKEQ6MjAyNTAxMjQwODUxNDcrMDEnMDAnKQovTW9kRGF0ZShEOjIwMjUwMTI0MDg1MTQ3KzAxJzAwJyk+PmVuZG9iagp4cmVmCjAgMTQKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwNzcyIDAwMDAwIG4gCjAwMDAwMDIyMDcgMDAwMDAgbiAKMDAwMDAwMDcwNyAwMDAwMCBuIAowMDAwMDAwNDM1IDAwMDAwIG4gCjAwMDAwMDAxOTYgMDAwMDAgbiAKMDAwMDAwMDI5NiAwMDAwMCBuIAowMDAwMDAwODM3IDAwMDAwIG4gCjAwMDAwMDA4OTEgMDAwMDAgbiAKMDAwMDAwMDU3MCAwMDAwMCBuIAowMDAwMDAwMzE0IDAwMDAwIG4gCjAwMDAwMDA0MTYgMDAwMDAgbiAKMDAwMDAwMDkyMCAwMDAwMCBuIAowMDAwMDAwOTUwIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgMTQgL1Jvb3QgMSAwIFIgL0luZm8gMiAwIFIKL0lEIFs8NUFCOUUwNkQxMkJBMENFOEYwNTU1NDFGODg1REMzRjk+PDVBQjlFMDZEMTJCQTBDRThGMDU1NTQxRjg4NURDM0Y5Pl0KPj4Kc3RhcnR4cmVmCjIzMzAKJSVFT0YK",
+    "pdfmeVersion": "5.3.3"
+  }
+  window.generatePdf = async function () {
+    // Send the required data to the Web Worker
+    console.log("pdfTemplate", pdfTemplate)
+    pdfWorker.postMessage({
+      pdfTemplate,
+    });
+
+    // Handle the response from the Worker
+    pdfWorker.onmessage = function (event) {
+      const { pdf, error } = event.data;
+
+      if (error) {
+        console.error("PDF generation error:", error);
+        return;
+      }
+
+      // Perform download in the main thread
+      const blob = new Blob([pdf.buffer], { type: "application/pdf" });
+      downloadBlob(blob, "photoquest-aufgaben.pdf");
+      window.dispatchEvent(new Event("pdf-generation-finished"));
+    };
+  };
+
+  function downloadBlob(blob, name = "file.txt") {
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = name;
+    document.body.appendChild(link);
+    link.dispatchEvent(
+        new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        })
+    );
+    document.body.removeChild(link);
+  }
+</script>
+
+<button
+    class="btn btn-accent"
+    onclick="console.log('test');window.generatePdf()"
+>
+  PDF generieren
+</button>
